@@ -1,11 +1,14 @@
 package com.kirana.store.collections;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.kirana.store.redis.entity.CustomerRedis;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.redis.core.RedisHash;
 
 
 /**
@@ -13,6 +16,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * the primary key of the table
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "customer")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Customer {
@@ -32,5 +37,9 @@ public class Customer {
         this.age = age;
         this.phoneNumber = phoneNumber;
         this.storeId = storeId;
+    }
+
+    public CustomerRedis mapToCache() {
+        return new CustomerRedis(id, name, age, phoneNumber, storeId);
     }
 }

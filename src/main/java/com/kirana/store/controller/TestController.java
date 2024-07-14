@@ -21,8 +21,12 @@ public class TestController {
 
     @GetMapping
     public ResponseEntity<?> test(@RequestHeader(Constants.X_USER_ID) String auth) {
-        boolean isTrue = onBoardingService.isStoreBelongToUser("6693ad62604c8e609b2095bf" ,auth);
-        System.out.println("store belonging: " + isTrue);
+//        studentRepository.save(new Student(
+//                "aalekh",
+//                "aalekh sajonia",
+//                Student.Gender.MALE,
+//                10
+//        ));
         HashMap<String, Double> data = service.getCurrencyRateNow();
         return new ResponseEntity<>(data, HttpStatus.OK);
     }

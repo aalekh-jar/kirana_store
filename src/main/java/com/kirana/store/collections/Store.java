@@ -3,9 +3,11 @@ package com.kirana.store.collections;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.kirana.store.collections.common.Address;
 import com.kirana.store.collections.common.OwnerDetails;
+import com.kirana.store.redis.entity.StoreRedis;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -14,6 +16,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
  * This Table will store the store owner details i.e tagging store
  */
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "store")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Store {
@@ -33,5 +37,9 @@ public class Store {
         this.ownerDetails = ownerDetails;
         this.ownerAddress = ownerAddress;
         this.userId = userId;
+    }
+
+    public StoreRedis mapToCache() {
+        return new StoreRedis(id, description, ownerDetails, ownerAddress, userId);
     }
 }

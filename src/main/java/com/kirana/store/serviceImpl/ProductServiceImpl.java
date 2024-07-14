@@ -4,6 +4,9 @@ import com.kirana.store.collections.Product;
 import com.kirana.store.collections.Store;
 import com.kirana.store.constants.ErrorStrings;
 import com.kirana.store.exceptions.NoStoreRegistrationFoundException;
+import com.kirana.store.redis.entity.CustomerRedis;
+import com.kirana.store.redis.entity.ProductRedis;
+import com.kirana.store.redis.repository.ProductRedisRepository;
 import com.kirana.store.repository.OnboardingRepository;
 import com.kirana.store.repository.ProductRepository;
 import com.kirana.store.service.ProductService;
@@ -21,6 +24,9 @@ public class ProductServiceImpl implements ProductService {
 
     @Autowired
     OnboardingRepository onboardingRepository;
+
+    @Autowired
+    ProductRedisRepository productRedisRepository;
 
     @Override
     public String save(Product product) {
@@ -43,7 +49,13 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getByProductId(String id) {
+        Optional<ProductRedis> cacheCustomer
+                = productRedisRepository.findById(String.valueOf(id));
+        if(cacheCustomer.isPresent()) {
+            return cacheCustomer.get().mapToProduct();
+        }
         Optional<Product> product = productRepository.findById(id);
+        product.ifPresent(value -> productRedisRepository.save(value.mapToCache()));
         return product.orElse(null);
     }
 

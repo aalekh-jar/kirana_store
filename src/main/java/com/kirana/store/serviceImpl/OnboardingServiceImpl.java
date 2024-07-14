@@ -1,6 +1,9 @@
 package com.kirana.store.serviceImpl;
 
 import com.kirana.store.collections.Store;
+import com.kirana.store.redis.entity.CustomerRedis;
+import com.kirana.store.redis.entity.StoreRedis;
+import com.kirana.store.redis.repository.StoreRedisRepository;
 import com.kirana.store.repository.OnboardingRepository;
 import com.kirana.store.service.OnBoardingService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +17,9 @@ public class OnboardingServiceImpl implements OnBoardingService {
 
     @Autowired
     OnboardingRepository onboardingRepository;
+
+    @Autowired
+    StoreRedisRepository storeRedisRepository;
 
     @Override
     public String save(Store store) {
@@ -33,7 +39,13 @@ public class OnboardingServiceImpl implements OnBoardingService {
 
     @Override
     public Store getByStoreId(String storeId) {
+        Optional<StoreRedis> cacheStore
+                = storeRedisRepository.findById(String.valueOf(storeId));
+        if(cacheStore.isPresent()) {
+            return cacheStore.get().mapToStore();
+        }
         Optional<Store> store = onboardingRepository.findById(storeId);
+        store.ifPresent(value -> storeRedisRepository.save(value.mapToCache()));
         return store.orElse(null);
     }
 }
