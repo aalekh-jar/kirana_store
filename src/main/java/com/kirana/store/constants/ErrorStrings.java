@@ -17,4 +17,5 @@ public class ErrorStrings {
     public static final String CUSTOMER_ID_NOT_PRESENT = "Customer id not found";
 
     public static final String NOT_ENOUGH_STOCK = "Not enough stock";
+    public static final String CURRENCY_CONVERSION_DATA_NOT_FOUND = "Currency conversion data not found";
 }

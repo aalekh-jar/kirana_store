@@ -30,6 +30,15 @@ public class ExceptionHandlerMiddleware {
     }
 
     @ExceptionHandler
+    public ResponseEntity<GenericErrorResponse> handleException(CurrentConversionDataNotAvailable exc) {
+        GenericErrorResponse error = new GenericErrorResponse();
+        error.setStatus(HttpStatus.NOT_FOUND.value());
+        error.setMessage(exc.getMessage());
+        error.setErrorCode(ErrorCodes.CURRENCY_CONVERSION_DATA_NOT_FOUND);
+        return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
     ResponseEntity<GenericErrorResponse> handleException(NoStoreRegistrationFoundException exc) {
         GenericErrorResponse error = new GenericErrorResponse();
         error.setStatus(HttpStatus.NOT_FOUND.value());

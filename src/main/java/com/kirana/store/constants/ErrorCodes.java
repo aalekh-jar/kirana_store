@@ -12,5 +12,5 @@ public class ErrorCodes {
     public static int VALIDATION_FAILED_CODE = 1006;
     public static int FIELD_MISSING_CODE = 1007;
     public static int DATA_MISSING_CODE = 1008;
-
+    public static int CURRENCY_CONVERSION_DATA_NOT_FOUND = 1009;
 }
