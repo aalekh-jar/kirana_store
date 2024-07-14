@@ -6,9 +6,12 @@ import com.kirana.store.constants.ErrorStrings;
 import com.kirana.store.dto.CustomerDto;
 import com.kirana.store.exceptions.DataValidationError;
 import com.kirana.store.exceptions.NoCustomerRegisteredException;
+import com.kirana.store.responses.SuccessCreated;
 import com.kirana.store.service.CustomerService;
 import com.kirana.store.service.OnBoardingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +27,7 @@ public class CustomerController {
     OnBoardingService onBoardingService;
 
     @PostMapping
-    public String save(
+    public ResponseEntity<SuccessCreated> save(
             @RequestBody CustomerDto customerDto,
             @RequestHeader(Constants.X_USER_ID) String userId) {
         if(userId == null || userId.isEmpty() || !customerDto.isValid()) {
@@ -33,7 +36,7 @@ public class CustomerController {
         if (!onBoardingService.isStoreBelongToUser(customerDto.getStoreId(), userId)) {
             throw new DataValidationError("Store is not mapped to the user");
         }
-        return customerService.save(customerDto.mapToCustomer());
+        return new ResponseEntity<>(customerService.save(customerDto.mapToCustomer()), HttpStatus.CREATED);
     }
 
     @GetMapping

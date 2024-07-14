@@ -1,9 +1,12 @@
 package com.kirana.store.serviceImpl;
 
 import com.kirana.store.collections.Customer;
+import com.kirana.store.constants.SuccessCodes;
+import com.kirana.store.constants.SuccessStrings;
 import com.kirana.store.redis.entity.CustomerRedis;
 import com.kirana.store.redis.repository.CustomerRedisRepository;
 import com.kirana.store.repository.CustomerRepository;
+import com.kirana.store.responses.SuccessCreated;
 import com.kirana.store.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,8 +25,12 @@ public class CustomerServiceImpl implements CustomerService {
     public CustomerRedisRepository customerRedisRepository;
 
     @Override
-    public String save(Customer customer) {
-        return customerRepository.save(customer).getId();
+    public SuccessCreated save(Customer customer) {
+        customerRepository.save(customer).getId();
+        SuccessCreated response = new SuccessCreated();
+        response.setCode(SuccessCodes.SUCCESS_CREATED);
+        response.setMessage(SuccessStrings.SUCCESSFULLY_CREATED);
+        return response;
     }
 
     @Override

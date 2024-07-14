@@ -1,12 +1,13 @@
 package com.kirana.store.service;
 
 import com.kirana.store.collections.Product;
+import com.kirana.store.responses.SuccessCreated;
 
 import java.util.List;
 
 public interface ProductService {
 
-    String save(Product product);
+    SuccessCreated save(Product product);
 
     List<Product> getNameStartsWith(String name);
 

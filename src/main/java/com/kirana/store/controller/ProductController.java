@@ -7,10 +7,14 @@ import com.kirana.store.dto.ProductDto;
 import com.kirana.store.exceptions.DataValidationError;
 import com.kirana.store.exceptions.NoProductsFoundException;
 import com.kirana.store.repository.OnboardingRepository;
+import com.kirana.store.responses.SuccessCreated;
 import com.kirana.store.service.OnBoardingService;
 import com.kirana.store.service.ProductService;
 import com.netflix.discovery.converters.Auto;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,7 +30,7 @@ public class ProductController {
     OnBoardingService onBoardingService;
 
     @PostMapping
-    public String save(
+    public ResponseEntity<SuccessCreated> save(
             @RequestBody ProductDto productDto,
             @RequestHeader(Constants.X_USER_ID) String userId) {
         if (userId == null || userId.isEmpty() || !productDto.isValid()) {
@@ -35,7 +39,7 @@ public class ProductController {
         if (!onBoardingService.isStoreBelongToUser(productDto.getStoreId(), userId)) {
             throw new DataValidationError("Store is not mapped to the user");
         }
-        return productService.save(productDto.mapToProduct());
+        return new ResponseEntity<>(productService.save(productDto.mapToProduct()), HttpStatus.CREATED);
     }
 
     @GetMapping

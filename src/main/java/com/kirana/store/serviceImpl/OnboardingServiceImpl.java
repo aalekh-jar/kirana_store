@@ -1,10 +1,13 @@
 package com.kirana.store.serviceImpl;
 
 import com.kirana.store.collections.Store;
+import com.kirana.store.constants.SuccessCodes;
+import com.kirana.store.constants.SuccessStrings;
 import com.kirana.store.redis.entity.CustomerRedis;
 import com.kirana.store.redis.entity.StoreRedis;
 import com.kirana.store.redis.repository.StoreRedisRepository;
 import com.kirana.store.repository.OnboardingRepository;
+import com.kirana.store.responses.SuccessCreated;
 import com.kirana.store.service.OnBoardingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,8 +25,12 @@ public class OnboardingServiceImpl implements OnBoardingService {
     StoreRedisRepository storeRedisRepository;
 
     @Override
-    public String save(Store store) {
-        return onboardingRepository.save(store).getId();
+    public SuccessCreated save(Store store) {
+        onboardingRepository.save(store).getId();
+        SuccessCreated response = new SuccessCreated();
+        response.setCode(SuccessCodes.SUCCESS_CREATED);
+        response.setMessage(SuccessStrings.SUCCESSFULLY_CREATED);
+        return response;
     }
 
     @Override

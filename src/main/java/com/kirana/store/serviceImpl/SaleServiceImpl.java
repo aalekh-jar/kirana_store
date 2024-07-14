@@ -37,7 +37,7 @@ public class SaleServiceImpl implements SaleService {
     CustomerRepository customerRepository;
 
     @Override
-    public ResponseEntity<?> save(SalesDto salesDto) {
+    public SuccessCreated save(SalesDto salesDto) {
         // Check the quantity
         Optional<Stock> stock = stockRepository.findByProductId(salesDto.productId);
         if (stock.isEmpty() || stock.get().getQuantity() < salesDto.quantity) {
@@ -65,7 +65,7 @@ public class SaleServiceImpl implements SaleService {
         SuccessCreated response = new SuccessCreated();
         response.setCode(SuccessCodes.SUCCESS_CREATED);
         response.setMessage(SuccessStrings.SUCCESSFULLY_CREATED);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return response;
     }
 
     @Override

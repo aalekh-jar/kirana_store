@@ -7,8 +7,11 @@ import com.kirana.store.constants.ErrorStrings;
 import com.kirana.store.dto.StoreDto;
 import com.kirana.store.exceptions.DataValidationError;
 import com.kirana.store.exceptions.NoStoreRegistrationFoundException;
+import com.kirana.store.responses.SuccessCreated;
 import com.kirana.store.service.OnBoardingService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,13 +24,13 @@ public class OnBoardingController {
     OnBoardingService onBoardingService;
 
     @PostMapping
-    public String save(
+    public ResponseEntity<SuccessCreated> save(
             @RequestBody StoreDto storeDto,
             @RequestHeader(Constants.X_USER_ID) String userId) {
         if (userId == null || userId.isEmpty() || !storeDto.isValid()) {
             throw new DataValidationError("Input data not avalid");
         }
-        return onBoardingService.save(storeDto.mapToStore(userId));
+        return new ResponseEntity<>(onBoardingService.save(storeDto.mapToStore(userId)), HttpStatus.CREATED);
     }
 
     @GetMapping

@@ -40,7 +40,7 @@ public class PurchaseServiceImpl implements PurchaseService {
     OnboardingRepository onboardingRepository;
 
     @Override
-    public ResponseEntity<?> save(Purchase purchase) {
+    public SuccessCreated save(Purchase purchase) {
         purchaseRepository.save(purchase);
         Optional<Stock> stock = stockRepository.findByProductId(purchase.getProductId());
         if (stock.isPresent()) {
@@ -58,7 +58,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         SuccessCreated response = new SuccessCreated();
         response.setCode(SuccessCodes.SUCCESS_CREATED);
         response.setMessage(SuccessStrings.SUCCESSFULLY_CREATED);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return response;
     }
 
     @Override

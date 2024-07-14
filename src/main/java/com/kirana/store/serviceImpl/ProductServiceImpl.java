@@ -3,12 +3,15 @@ package com.kirana.store.serviceImpl;
 import com.kirana.store.collections.Product;
 import com.kirana.store.collections.Store;
 import com.kirana.store.constants.ErrorStrings;
+import com.kirana.store.constants.SuccessCodes;
+import com.kirana.store.constants.SuccessStrings;
 import com.kirana.store.exceptions.NoStoreRegistrationFoundException;
 import com.kirana.store.redis.entity.CustomerRedis;
 import com.kirana.store.redis.entity.ProductRedis;
 import com.kirana.store.redis.repository.ProductRedisRepository;
 import com.kirana.store.repository.OnboardingRepository;
 import com.kirana.store.repository.ProductRepository;
+import com.kirana.store.responses.SuccessCreated;
 import com.kirana.store.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,12 +32,16 @@ public class ProductServiceImpl implements ProductService {
     ProductRedisRepository productRedisRepository;
 
     @Override
-    public String save(Product product) {
+    public SuccessCreated save(Product product) {
         Optional<Store> store = onboardingRepository.findById(product.getStoreId());
         if (store.isEmpty()) {
             throw new NoStoreRegistrationFoundException(ErrorStrings.INVALID_STORE);
         }
-        return productRepository.save(product).getId();
+        productRepository.save(product).getId();
+        SuccessCreated response = new SuccessCreated();
+        response.setCode(SuccessCodes.SUCCESS_CREATED);
+        response.setMessage(SuccessStrings.SUCCESSFULLY_CREATED);
+        return response;
     }
 
     @Override
@@ -51,7 +58,7 @@ public class ProductServiceImpl implements ProductService {
     public Product getByProductId(String id) {
         Optional<ProductRedis> cacheCustomer
                 = productRedisRepository.findById(String.valueOf(id));
-        if(cacheCustomer.isPresent()) {
+        if (cacheCustomer.isPresent()) {
             return cacheCustomer.get().mapToProduct();
         }
         Optional<Product> product = productRepository.findById(id);

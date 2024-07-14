@@ -8,11 +8,13 @@ import com.kirana.store.constants.Constants;
 import com.kirana.store.constants.ErrorStrings;
 import com.kirana.store.dto.SalesDto;
 import com.kirana.store.exceptions.*;
+import com.kirana.store.responses.SuccessCreated;
 import com.kirana.store.service.CustomerService;
 import com.kirana.store.service.OnBoardingService;
 import com.kirana.store.service.ProductService;
 import com.kirana.store.service.SaleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +37,7 @@ public class SaleController {
     CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<?> recordSale(
+    public ResponseEntity<SuccessCreated> recordSale(
             @RequestBody SalesDto salesDto,
             @RequestHeader(Constants.X_USER_ID) String userId
     ) {
@@ -67,7 +69,7 @@ public class SaleController {
             throw new NoCustomerRegisteredException(ErrorStrings.NO_CUSTOMERS_REGISTERED_FOR_STORE);
         }
 
-        return saleService.save(salesDto);
+        return new ResponseEntity<>(saleService.save(salesDto), HttpStatus.CREATED);
     }
 
     @GetMapping

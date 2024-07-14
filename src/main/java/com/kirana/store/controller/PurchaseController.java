@@ -10,10 +10,12 @@ import com.kirana.store.exceptions.DataValidationError;
 import com.kirana.store.exceptions.NoProductsFoundException;
 import com.kirana.store.exceptions.NoPurchasesFoundException;
 import com.kirana.store.exceptions.NoStoreRegistrationFoundException;
+import com.kirana.store.responses.SuccessCreated;
 import com.kirana.store.service.OnBoardingService;
 import com.kirana.store.service.ProductService;
 import com.kirana.store.service.PurchaseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,7 +35,7 @@ public class PurchaseController {
     OnBoardingService onBoardingService;
 
     @PostMapping
-    public ResponseEntity<?> save(
+    public ResponseEntity<SuccessCreated> save(
             @RequestBody PurchaseDto purchaseDto,
             @RequestHeader(Constants.X_USER_ID) String userId) {
         if (userId == null || userId.isEmpty() || !purchaseDto.isValid()) {
@@ -51,7 +53,7 @@ public class PurchaseController {
         if (!onBoardingService.isStoreBelongToUser(store.getId(), userId)) {
             throw new DataValidationError("Store is not mapped to a store you belong");
         }
-        return purchaseService.save(purchaseDto.mapToPurchase());
+        return new ResponseEntity<>(purchaseService.save(purchaseDto.mapToPurchase()), HttpStatus.CREATED);
     }
 
     @GetMapping
