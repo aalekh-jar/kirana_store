@@ -41,35 +41,24 @@ public class PurchaseServiceImpl implements PurchaseService {
 
     @Override
     public ResponseEntity<?> save(Purchase purchase) {
-        if (purchase.getProductId() != null && !purchase.getProductId().isEmpty()) {
-            Optional<Product> product = productRepository.findById(purchase.getProductId());
-            if (product.isEmpty()) {
-                throw new NoProductsFoundException(ErrorStrings.NO_PRODUCT_FOUND);
-            }
-            Optional<Store> store = onboardingRepository.findById(product.get().getStoreId());
-            if (store.isEmpty()) {
-                throw new NoStoreRegistrationFoundException(ErrorStrings.STORE_DOES_NOT_EXIST);
-            }
-            purchaseRepository.save(purchase);
-            Optional<Stock> stock = stockRepository.findByProductId(purchase.getProductId());
-            if (stock.isPresent()) {
-                Stock oldStock = stock.get();
-                oldStock.setQuantity(oldStock.getQuantity() + purchase.getQuantity());
-                stockRepository.save(oldStock);
-            } else {
-                Stock newStock = new Stock(
-                        purchase.getProductId(),
-                        purchase.getQuantity(),
-                        System.currentTimeMillis()
-                );
-                stockRepository.save(newStock);
-            }
-            SuccessCreated response = new SuccessCreated();
-            response.setCode(SuccessCodes.SUCCESS_CREATED);
-            response.setMessage(SuccessStrings.SUCCESSFULLY_CREATED);
-            return new ResponseEntity<>(response, HttpStatus.OK);
+        purchaseRepository.save(purchase);
+        Optional<Stock> stock = stockRepository.findByProductId(purchase.getProductId());
+        if (stock.isPresent()) {
+            Stock oldStock = stock.get();
+            oldStock.setQuantity(oldStock.getQuantity() + purchase.getQuantity());
+            stockRepository.save(oldStock);
+        } else {
+            Stock newStock = new Stock(
+                    purchase.getProductId(),
+                    purchase.getQuantity(),
+                    System.currentTimeMillis()
+            );
+            stockRepository.save(newStock);
         }
-        throw new RuntimeException(ErrorStrings.NO_STORE_MATCHES_GIVEN_STRING);
+        SuccessCreated response = new SuccessCreated();
+        response.setCode(SuccessCodes.SUCCESS_CREATED);
+        response.setMessage(SuccessStrings.SUCCESSFULLY_CREATED);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @Override

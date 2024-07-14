@@ -1,14 +1,10 @@
 package com.kirana.store.serviceImpl;
 
 import com.kirana.store.collections.*;
-import com.kirana.store.constants.ErrorCodes;
 import com.kirana.store.constants.ErrorStrings;
 import com.kirana.store.constants.SuccessCodes;
 import com.kirana.store.constants.SuccessStrings;
-import com.kirana.store.entities.SaleData;
-import com.kirana.store.exceptions.GeneralException;
-import com.kirana.store.exceptions.NoCustomerRegisteredException;
-import com.kirana.store.exceptions.NoProductsFoundException;
+import com.kirana.store.dto.SalesDto;
 import com.kirana.store.exceptions.NotEnoughStockException;
 import com.kirana.store.repository.*;
 import com.kirana.store.responses.SuccessCreated;
@@ -19,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 // Credit
@@ -42,55 +37,28 @@ public class SaleServiceImpl implements SaleService {
     CustomerRepository customerRepository;
 
     @Override
-    public ResponseEntity<?> save(SaleData saleData) {
-
-        if (saleData.productId == null ||
-                saleData.productId.isEmpty() ||
-                saleData.quantity <= 0 ||
-                saleData.pricePerUnit <= 0) {
-            throw new GeneralException(ErrorStrings.VALIDATION_FAILED, ErrorCodes.VALIDATION_FAILED_CODE);
-        }
-
-        Optional<Product> product = productRepository.findById(saleData.productId);
-
-        if (product.isEmpty()) {
-            throw new NoProductsFoundException(ErrorStrings.NO_PRODUCT_FOUND);
-        }
-
-        if (!Objects.equals(product.get().getStoreId(), saleData.storeId)) {
-            throw new NoProductsFoundException(ErrorStrings.PRODUCT_NOT_FOUND_IN_GIVEN_STORE);
-        }
-
-        if (saleData.customerId == null || saleData.customerId.isEmpty()) {
-            throw new GeneralException(ErrorStrings.CUSTOMER_ID_NOT_PRESENT, ErrorCodes.DATA_MISSING_CODE);
-        }
-        // Check if customer is legit or not
-        Optional<Customer> customer = customerRepository.findById(saleData.customerId);
-        if (customer.isEmpty() || !Objects.equals(customer.get().getStoreId(), saleData.storeId)) {
-            throw new NoCustomerRegisteredException(ErrorStrings.NO_CUSTOMERS_REGISTERED_FOR_STORE);
-        }
-
+    public ResponseEntity<?> save(SalesDto salesDto) {
         // Check the quantity
-        Optional<Stock> stock = stockRepository.findByProductId(saleData.productId);
-        if (stock.isEmpty() || stock.get().getQuantity() < saleData.quantity) {
+        Optional<Stock> stock = stockRepository.findByProductId(salesDto.productId);
+        if (stock.isEmpty() || stock.get().getQuantity() < salesDto.quantity) {
             throw new NotEnoughStockException(ErrorStrings.NOT_ENOUGH_STOCK);
         }
 
         // Update quantity
         Stock updatedStock = stock.get();
-        updatedStock.setQuantity(updatedStock.getQuantity() - saleData.quantity);
+        updatedStock.setQuantity(updatedStock.getQuantity() - salesDto.quantity);
         stockRepository.save(updatedStock);
 
         // Create Sale Entry
-        Sale sale = new Sale(saleData.customerId);
+        Sale sale = new Sale(salesDto.customerId);
         String saleId = salesRepository.save(sale).getId();
 
         // Create SaleDetails Entry
         SaleDetails saleDetails = new SaleDetails(
-                saleData.productId,
+                salesDto.productId,
                 saleId,
-                saleData.pricePerUnit,
-                saleData.quantity
+                salesDto.pricePerUnit,
+                salesDto.quantity
         );
 
         saleDetailsRepository.save(saleDetails);

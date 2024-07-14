@@ -21,6 +21,15 @@ public class ExceptionHandlerMiddleware {
     }
 
     @ExceptionHandler
+    public ResponseEntity<GenericErrorResponse> handleException(DataValidationError exc) {
+        GenericErrorResponse error = new GenericErrorResponse();
+        error.setStatus(HttpStatus.FORBIDDEN.value());
+        error.setMessage(exc.getMessage());
+        error.setErrorCode(ErrorCodes.DATA_VALIDATION_ERROR);
+        return new ResponseEntity<>(error, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<GenericErrorResponse> handleException(NotEnoughStockException exc) {
         GenericErrorResponse error = new GenericErrorResponse();
         error.setStatus(HttpStatus.CONFLICT.value());

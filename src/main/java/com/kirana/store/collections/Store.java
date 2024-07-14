@@ -23,12 +23,15 @@ public class Store {
     private String description;
     private OwnerDetails ownerDetails;
     private Address ownerAddress;
+    private String userId;
 
     public Store(String description,
                  OwnerDetails ownerDetails,
-                 Address ownerAddress) {
+                 Address ownerAddress,
+                 String userId) {
         this.description = description;
         this.ownerDetails = ownerDetails;
         this.ownerAddress = ownerAddress;
+        this.userId = userId;
     }
 }

@@ -11,4 +11,6 @@ public interface OnboardingRepository extends MongoRepository<Store, String> {
 
     List<Store> findByDescriptionStartsWith(String name);
 
+    Store findByIdAndUserId(String id, String userId);
+
 }

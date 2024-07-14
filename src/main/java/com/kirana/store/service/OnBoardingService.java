@@ -10,4 +10,7 @@ public interface OnBoardingService {
 
     List<Store> getStoreStartsWith(String name);
 
+    boolean isStoreBelongToUser(String storeId, String userId);
+
+    Store getByStoreId(String storeId);
 }

@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OnboardingServiceImpl implements OnBoardingService {
@@ -22,5 +23,17 @@ public class OnboardingServiceImpl implements OnBoardingService {
     @Override
     public List<Store> getStoreStartsWith(String name) {
         return onboardingRepository.findByDescriptionStartsWith(name);
+    }
+
+    @Override
+    public boolean isStoreBelongToUser(String storeId, String userId) {
+        Store store = onboardingRepository.findByIdAndUserId(storeId, userId);
+        return store != null;
+    }
+
+    @Override
+    public Store getByStoreId(String storeId) {
+        Optional<Store> store = onboardingRepository.findById(storeId);
+        return store.orElse(null);
     }
 }

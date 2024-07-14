@@ -12,4 +12,6 @@ public interface ProductService {
 
     List<Product> getAllProductsFromGivenStore(String storeId);
 
+    Product getByProductId(String id);
+
 }

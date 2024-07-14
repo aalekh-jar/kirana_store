@@ -18,4 +18,5 @@ public class ErrorStrings {
 
     public static final String NOT_ENOUGH_STOCK = "Not enough stock";
     public static final String CURRENCY_CONVERSION_DATA_NOT_FOUND = "Currency conversion data not found";
+    public static final String PRODUCT_DONT_BELONG_TO_YOUR_STORE = "Given product don't belong to any of your stores";
 }

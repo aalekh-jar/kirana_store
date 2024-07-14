@@ -41,4 +41,10 @@ public class ProductServiceImpl implements ProductService {
         return productRepository.findAllByStoreId(storeId);
     }
 
+    @Override
+    public Product getByProductId(String id) {
+        Optional<Product> product = productRepository.findById(id);
+        return product.orElse(null);
+    }
+
 }
