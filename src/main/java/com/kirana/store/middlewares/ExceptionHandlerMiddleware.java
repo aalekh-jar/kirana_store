@@ -21,6 +21,15 @@ public class ExceptionHandlerMiddleware {
     }
 
     @ExceptionHandler
+    public ResponseEntity<GenericErrorResponse> handleException(ResourceLockedException exc) {
+        GenericErrorResponse error = new GenericErrorResponse();
+        error.setStatus(HttpStatus.LOCKED.value());
+        error.setMessage(exc.getMessage());
+        error.setErrorCode(ErrorCodes.RESOURCE_LOCKING_ERROR);
+        return new ResponseEntity<>(error, HttpStatus.LOCKED);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<GenericErrorResponse> handleException(DataValidationError exc) {
         GenericErrorResponse error = new GenericErrorResponse();
         error.setStatus(HttpStatus.FORBIDDEN.value());
